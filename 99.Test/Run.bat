@@ -17,4 +17,4 @@ REM PCI-based PC(default): -M pc
 REM ISA-based PC         : -M isapc
 REM -M isapc is added for NE2000 ISA card.
 
-"C:\Program Files\qemu\qemu-system-x86_64w.exe" -L . -m 64 -fda C:/hangOS64/Disk.img -localtime -M pc
+"C:\Program Files\qemu\qemu-system-x86_64w.exe" -L . -m 64 -fda C:/Project/hangOS/99.Test/Disk.img -localtime -M pc
