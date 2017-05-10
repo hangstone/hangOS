@@ -3,6 +3,16 @@
 
 SECTION .text	;;	text 섹션(segment)을 정의
 
+;;	ex 4-4. 화면 최상단에 문자를 출력
+mov ax, 0xB800				;;	AX 레지스터에 0xB800 복사
+mov ds, ax						;;	DS 세그먼트에 AX 레지스터의 값(0xB800)을 복사
+
+mov byte [0x00], 'M'	;;	DS 세그먼트: offset 0xB800:0x0000에 'M'을 복사
+mov byte [0x01], 0x4A	;;	DS 세그먼트: offset 0xB800:0x0001에 0x4A(red 배경, 밝은 green 속성)를 복사
+
+mov byte [0x02], 'o'
+mov byte [0x03], 0x42
+
 jmp $					;;	현재 위치에서 infinitt loop 수행
 
 times 510 - ($ - $$) db 0x00	;;	$: 현재 line의 address
