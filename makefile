@@ -1,4 +1,5 @@
 all: BootLoader Disk.img
+	mv -f Disk.img C:\Project\hangOS\99.Test\Disk.img
 
 BootLoader:
 	@echo 
@@ -17,6 +18,7 @@ Disk.img: 00.BootLoader/BootLoader.bin
 	@echo
 	
 	cp 00.BootLoader/BootLoader.bin Disk.img
+	rm -f 00.BootLoader/BootLoader.bin
 	
 	@echo
 	@echo ========== All Build Complete ==========
