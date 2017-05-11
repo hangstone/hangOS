@@ -30,7 +30,7 @@ START:
   push  MESSAGE1            ;;  출력할 메시지의 address를 스택에 삽입
   push  0                   ;;  화면 Y좌표(0)을 스택에 삽입
   push  0                   ;;  화면 X좌표(0)을 스택에 삽입
-  push  PRINTMESSAGE        ;;  PRINTMESSAGE 함수 호출
+  call  PRINTMESSAGE        ;;  PRINTMESSAGE 함수 호출
   add   sp, 6               ;;  삽입한 parameter 제거
 
   ;;  OS 이미지를 로딩한다는 메시지 출력
@@ -161,8 +161,7 @@ PRINTMESSAGE:
   mov   si, word[bp+8]      ;;  세번째 parameter(출력할 문자열의 address)
 
 .MESSAGELOOP:                 ;;  메시지를 출력하는 loop
-  mov   cl, byte[si+MESSAGE1] ;;  MESSAGE1의 address에서 SI 레지스터 값만큼 더한 위치의 문자를
-                              ;;   CL register에 복사
+  mov   cl, byte[si]          ;;  SI 레지스터가 가리키는 문자열 위치에서 한 문자를 CL register에 복사
                               ;;  CL register는 CX register의 하위 1-byte를 의미
                               ;;  문자열은 1-byte면 충분하므로 CX 레지스터의 하위 1-byte만 사용
   cmp   cl, 0                 ;;  복사된 문자와 '0'을 비교
@@ -199,7 +198,7 @@ MESSAGE1: db 'HANG64 OS Boot Loader was Started!', 0  ;;  출력할 메시지를 정의
                                                       ;;  .MESSAGELOOP에서 문자열이
                                                       ;;  종료되었음을 알 수 있도록 함
 DISKERRORMESSAGE:         db  'DISK Error!', 0
-IMAGELOADINGMESSAGE:      db  'Loading OS Image..'
+IMAGELOADINGMESSAGE:      db  'Loading OS Image..', 0
 LOADINGCOMPLETEMESSAGE:   db  'Complete!', 0
 
 ;;  disk 읽기와 관련한 변수
@@ -213,7 +212,6 @@ TRACKNUMBER:        db    0x00    ;;  OS 이미지가 시작하는 트랙 번호를 지정하는 
 
 
 
-jmp $                           ;;  현재 위치에서 infinite loop 수행
 
 times 510 - ($ - $$) db 0x00    ;;  $: 현재 line의 address
                                 ;;  $$: 현재 섹션(.text)의 시작 address
