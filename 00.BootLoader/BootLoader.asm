@@ -3,9 +3,6 @@
 
 SECTION .text   ;;  text 섹션(segment)을 정의
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;  chapter 4.3.4
-
 ;;  initialize segment register
   jmp 0x07C0:START    ;;  CS 세그먼트의 레지스터에 0x07C0을 복사하면서 START 레이블로 이동
 
@@ -49,11 +46,6 @@ START:
 ;;  출력할 메시지를 정의
 ;;  마지막은 '0'으로 설정하여, .MESSAGELOOP에서 처리할 수 있도록 함
 MESSAGE1: db 'HANG64 OS Boot Loader was Started!', 0
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;  chapter 5.2.1
 
 TOTALSECTORCOUNT:    dw    1024   ;;  bootloader를 제외한  OS 이미지 크기
                                   ;;  최대 1152 sector(0x90000 byte)까지 가능
@@ -113,9 +105,6 @@ READDATA:         ;;  디스크를 읽는 코드
   add byte[TRACKNUMBER], 0x01   ;;  트랙 번호를 '1'증가
   jmp READDATA                  ;;  READDATA로 이동
 READEND:
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 jmp $                           ;;  현재 위치에서 infinitt loop 수행
 
