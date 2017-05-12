@@ -1,4 +1,4 @@
-all: BootLoader Disk.img
+all: BootLoader Kernel32 Disk.img
 	mv -f Disk.img C:\Project\hangOS\99.Test\Disk.img
 
 BootLoader:
@@ -23,14 +23,14 @@ Kernel32:
 	@echo ========== Build Complete ==========
 	@echo
 	
-Disk.img: BootLoader Kernel32
+Disk.img: 00.BootLoader/BootLoader.bin 01.Kernel32/Kernel32.bin
 	@echo
 	@echo ========== Disk Image Build Start ==========
 	@echo
 	
-	cat 00.BootLoader/BootLoader.bin 01.Kernel32/VirtualOS.bin > Disk.img
+	cat $^ > Disk.img
 	rm -f 00.BootLoader/BootLoader.bin
-	rm -f 01.Kernel32/VirtualOS.bin
+	rm -f 01.Kernel32/Kernel32.bin
 	
 	@echo
 	@echo ========== All Build Complete ==========
