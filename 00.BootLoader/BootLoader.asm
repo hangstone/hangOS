@@ -6,6 +6,10 @@ SECTION .text   ;;  text 섹션(segment)을 정의
 ;;  initialize segment register
 jmp 0x07C0:START      ;;  CS 세그먼트의 레지스터에 0x07C0을 복사하면서 START 레이블로 이동
 
+;;  disk 읽기와 관련한 변수
+TOTALSECTORCOUNT:   dw    2       ;;  bootloader를 제외한  OS 이미지 크기
+                                  ;;  최대 1152 sector(0x90000 byte)까지 가능
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  코드 영역
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -201,9 +205,6 @@ DISKERRORMESSAGE:         db  'DISK Error!', 0
 IMAGELOADINGMESSAGE:      db  'Loading OS Image..', 0
 LOADINGCOMPLETEMESSAGE:   db  'Complete!', 0
 
-;;  disk 읽기와 관련한 변수
-TOTALSECTORCOUNT:   dw    2       ;;  bootloader를 제외한  OS 이미지 크기
-                                  ;;  최대 1152 sector(0x90000 byte)까지 가능
 SECTORNUMBER:       db    0x02    ;;  OS 이미지가 시작하는 섹터 번호를 저장하는 영역
 HEADNUMBER:         db    0x00    ;;  OS 이미지가 시작하는 헤드 번호를 저장하는 영역
 TRACKNUMBER:        db    0x00    ;;  OS 이미지가 시작하는 트랙 번호를 지정하는 영역
