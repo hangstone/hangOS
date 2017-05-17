@@ -7,36 +7,52 @@
 
 #include "Types.h"
 
-void kPrintString(int nX, int nY, const char* pszString);
+void PrintString(int nX, int nY, const char* pszString);
 BOOL InitializeKernel64Area(void);
 BOOL IsMemoryEnough(void);
 
 void Main(void)
 {
-  kPrintString(0, 3, "C Language Kernel Started........................[Pass]");
+	BOOL bRet = FALSE;
+  PrintString(0, 3, "C Language Kernel Started........................[Pass]");
 
   //	최소 메모리 크기를 만족하는 지 검사
-  kPrintString(0, 4, "Minimum Memory Size Check........................[    ]");
-  if(FALSE == IsMemoryEnough())
+  PrintString(0, 4, "Minimum Memory Size Check........................[    ]");
+  bRet = IsMemoryEnough();
+  if(FALSE == bRet)
   {
-  	kPrintString(50, 4, "Fail");
-  	kPrintString(0, 5, "Not Enough Memory!! HANG64 OS Requires Over 64MB Memory!!");
+  	PrintString(50, 4, "Fail");
+  	PrintString(0, 5, "Not Enough Memory!! HANG64 OS Requires Over 64MB Memory!!");
 
   	while(1);
   }
   else
   {
-  	kPrintString(50, 4, "Pass");
+  	PrintString(50, 4, "Pass");
   }
 
-  InitializeKernel64Area();
-  kPrintString(0, 4, "IA-32e Kernel Area Initialization Complete");
+  //	IA-32e 모드의 커널 영역을 초기화
+  PrintString(0, 5, "IA-32e Kernel Area Initialize....................[    ]");
+  bRet = InitializeKernel64Area();
+  if (FALSE == bRet)
+  {
+  	PrintString(50, 5, "Fail");
+  	PrintString(0, 6, "Failed To Initialize Kernel Area");
+
+  	while(1);
+  }
+  else
+  {
+  	PrintString(50, 5, "Pass");
+  }
+
+
 
   while(1);
 }
 
 //  문자열 출력 함수
-void kPrintString(int nX, int nY, const char* pszString)
+void PrintString(int nX, int nY, const char* pszString)
 {
   CHARACTER* pstScreen = (CHARACTER *)0xB8000;
 
@@ -61,7 +77,7 @@ BOOL InitializeKernel64Area(void)
 
 		//	'0'으로 저장한 후, 다시 읽었을 때 '0'이 나오지 않으면 해당 address를 사용하는 데
 		//	문제가 생긴 것이므로 더이상 진행하지 않고 종료
-		if (0 != pCurrentAddress)
+		if (0 != *pCurrentAddress)
 		{
 			return FALSE;
 		}
