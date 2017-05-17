@@ -18,7 +18,7 @@ Kernel32:
 	@echo
 	
 	make -C 01.Kernel32
-	rm -f 01.Kernel32/Temp/Dependancy.dep
+	rm -f 01.Kernel32/Temp/Dependency.dep
 	rm -f 01.Kernel32/Temp/EntryPoint.bin
 	rm -f 01.Kernel32/Temp/Kernel32.elf
 	rm -f 01.Kernel32/Temp/Main.o

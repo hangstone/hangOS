@@ -7,43 +7,43 @@
 
 #include "Types.h"
 
-void PrintString(int nX, int nY, const char* pszString);
-BOOL InitializeKernel64Area(void);
-BOOL IsMemoryEnough(void);
+void kPrintString(int nX, int nY, const char* pszString);
+BOOL kInitializeKernel64Area(void);
+BOOL kIsMemoryEnough(void);
 
 void Main(void)
 {
 	BOOL bRet = FALSE;
-  PrintString(0, 3, "C Language Kernel Started........................[Pass]");
+  kPrintString(0, 3, "C Language Kernel Started........................[Pass]");
 
   //	최소 메모리 크기를 만족하는 지 검사
-  PrintString(0, 4, "Minimum Memory Size Check........................[    ]");
-  bRet = IsMemoryEnough();
+  kPrintString(0, 4, "Minimum Memory Size Check........................[    ]");
+  bRet = kIsMemoryEnough();
   if(FALSE == bRet)
   {
-  	PrintString(50, 4, "Fail");
-  	PrintString(0, 5, "Not Enough Memory!! HANG64 OS Requires Over 64MB Memory!!");
+  	kPrintString(50, 4, "Fail");
+  	kPrintString(0, 5, "Not Enough Memory!! HANG64 OS Requires Over 64MB Memory!!");
 
   	while(1);
   }
   else
   {
-  	PrintString(50, 4, "Pass");
+  	kPrintString(50, 4, "Pass");
   }
 
   //	IA-32e 모드의 커널 영역을 초기화
-  PrintString(0, 5, "IA-32e Kernel Area Initialize....................[    ]");
-  bRet = InitializeKernel64Area();
+  kPrintString(0, 5, "IA-32e Kernel Area Initialize....................[    ]");
+  bRet = kInitializeKernel64Area();
   if (FALSE == bRet)
   {
-  	PrintString(50, 5, "Fail");
-  	PrintString(0, 6, "Failed To Initialize Kernel Area");
+  	kPrintString(50, 5, "Fail");
+  	kPrintString(0, 6, "Failed To Initialize Kernel Area");
 
   	while(1);
   }
   else
   {
-  	PrintString(50, 5, "Pass");
+  	kPrintString(50, 5, "Pass");
   }
 
 
@@ -52,7 +52,7 @@ void Main(void)
 }
 
 //  문자열 출력 함수
-void PrintString(int nX, int nY, const char* pszString)
+void kPrintString(int nX, int nY, const char* pszString)
 {
   CHARACTER* pstScreen = (CHARACTER *)0xB8000;
 
@@ -63,7 +63,7 @@ void PrintString(int nX, int nY, const char* pszString)
   }
 }
 
-BOOL InitializeKernel64Area(void)
+BOOL kInitializeKernel64Area(void)
 {
 	DWORD* pCurrentAddress;
 
@@ -89,7 +89,7 @@ BOOL InitializeKernel64Area(void)
 	return TRUE;
 }
 
-BOOL IsMemoryEnough(void)
+BOOL kIsMemoryEnough(void)
 {
 	DWORD* pCurrentAddress;
 
