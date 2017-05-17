@@ -17,8 +17,20 @@
 #define BYTESOFSECTOR  512
 
 //  function declaration
+
+/**
+ *  현재 위치부터 512바이트 배수 위치까지 맞추어 0x00으로 채움
+ */
 int   AdjustInSectorSize(int nFd, int nSourceSize);
+
+/**
+ *  부트 로더에 커널에 대한 정보를 삽입
+ */
 void  WriteKernelInformation(int nTargetFd, int nKernelSectorCount);
+
+/**
+ *  소스 파일(Source FD)의 내용을 목표 파일(Target FD)에 복사하고 그 크기를 되돌려줌
+ */
 int   CopyFile(int nSourceFd, int nTargetFd);
 
 int   main(int argc, char* argv[])
@@ -29,12 +41,14 @@ int   main(int argc, char* argv[])
   int nKernel32SectorCount;
   int nSourceSize;
 
+  //	check command line parameter
   if (3 > argc)
   {
       fprintf(stderr, "[ERROR] ImageMaker.exe BootLoader.bin Kernel32.bin\n");
       exit(-1);
   }
 
+  //	Disk.img 파일을 생성
   nTargetFd = open("Disk.img",
 									 O_RDWR | O_CREAT | O_TRUNC | O_BINARY,
 									 S_IREAD |S_IWRITE);
@@ -44,7 +58,9 @@ int   main(int argc, char* argv[])
       exit(-1);
   }
 
-  //  부트로더 파일을 읽어서 모든 내용을 디스크 이미지 파일로 복사
+  /*
+   *	부트로더 파일을 읽어서 모든 내용을 디스크 이미지 파일로 복사
+   */
   printf("[INFO] Copy boot loader to image file\n");
   nSourceFd = open(argv[1], O_RDONLY | O_BINARY);
   if (-1 == nSourceFd)
@@ -63,7 +79,9 @@ int   main(int argc, char* argv[])
          nSourceSize,
          nBootLoaderSize);
 
-  //  32-bit 커널 파일을 열어서 모든 내용을 디스크 이미지 파일로 복사
+  /*
+   *  32-bit 커널 파일을 열어서 모든 내용을 디스크 이미지 파일로 복사
+   */
   if ((nSourceFd = open(argv[2], O_RDONLY | O_BINARY)) == -1)
   {
     fprintf(stderr, "[ERROR] failed to open %s", argv[2]);
@@ -80,7 +98,9 @@ int   main(int argc, char* argv[])
          nSourceSize,
          nKernel32SectorCount);
 
-  //  디스크 이미지에 커널 정보 갱신
+  /**
+   *  디스크 이미지에 커널 정보 갱신
+   */
   printf("[INFO] Start to write kernel information\n");
   //  부트섹터의 5번째 바이트부터 커널에 대한 정보를 넣음
   WriteKernelInformation(nTargetFd, nKernel32SectorCount);
@@ -90,9 +110,6 @@ int   main(int argc, char* argv[])
   return 0;
 }
 
-/**
- *  현재 위치부터 512바이트 배수 위치까지 맞추어 0x00으로 채움
- */
 int   AdjustInSectorSize(int iFd, int iSourceSize)
 {
   int i;
@@ -123,57 +140,61 @@ int   AdjustInSectorSize(int iFd, int iSourceSize)
       return iSectorCount;
 }
 
-/**
- *  부트 로더에 커널에 대한 정보를 삽입
- */
 void  WriteKernelInformation(int nTargetFd, int nKernelSectorCount)
 {
-    unsigned short usData;
-    long lPosition;
+	unsigned short usData;
+  long lPosition;
 
-    // 파일의 시작에서 5바이트 떨어진 위치가 커널의 총 섹터 수 정보를 나타냄
-    lPosition = lseek( nTargetFd, 5, SEEK_SET );
-    if( lPosition == -1 )
-    {
-        fprintf( stderr, "lseek fail. Return value = %d, errno = %d, %d\n",
-            lPosition, errno, SEEK_SET );
-        exit( -1 );
-    }
+  // 파일의 시작에서 5바이트 떨어진 위치가 커널의 총 섹터 수 정보를 나타냄
+  lPosition = lseek(nTargetFd, (off_t)5, SEEK_SET);
+  if (lPosition == -1)
+  {
+  	fprintf(stderr,
+						"lseek fail. Return value = %d, errno = %d, %d\n",
+						lPosition,
+						errno,
+						SEEK_SET);
+    exit( -1 );
+  }
+  else
+  {
+  	printf("[INFO] Found sector count position: %d\n", lPosition);
+  }
 
-    usData = ( unsigned short ) nKernelSectorCount;
-    write( nTargetFd, &usData, 2 );
+  usData = (unsigned short)nKernelSectorCount;
+  write(nTargetFd, &usData, 2);
 
-    printf( "[INFO] Total sector count except boot loader [%d]\n",
-        nKernelSectorCount );
+  printf("[INFO] Total sector count except boot loader [%d]\n",
+				 nKernelSectorCount);
 }
 
-/**
- *  소스 파일(Source FD)의 내용을 목표 파일(Target FD)에 복사하고 그 크기를 되돌려줌
- */
 int   CopyFile(int nSourceFd, int nTargetFd)
 {
-    int iSourceFileSize;
-    int iRead;
-    int iWrite;
-    char vcBuffer[ BYTESOFSECTOR ];
+	int nSourceFileSize;
+  int nRead;
+  int nWrite;
+  char vcBuffer[BYTESOFSECTOR];
 
-    iSourceFileSize = 0;
-    while( 1 )
+  nSourceFileSize = 0;
+  while (1)
+  {
+  	nRead		= read(nSourceFd, vcBuffer, sizeof(vcBuffer));
+  	nWrite	= write(nTargetFd, vcBuffer, nRead);
+
+    if (nRead != nWrite)
     {
-        iRead   = read( nSourceFd, vcBuffer, sizeof( vcBuffer ) );
-        iWrite  = write( nTargetFd, vcBuffer, iRead );
-
-        if( iRead != iWrite )
-        {
-            fprintf( stderr, "[ERROR] iRead != iWrite.. \n" );
-            exit(-1);
-        }
-        iSourceFileSize += iRead;
-
-        if( iRead != sizeof( vcBuffer ) )
-        {
-            break;
-        }
+    	fprintf(stderr,
+							"[ERROR] iRead != iWrite.. \n");
+		  exit(-1);
     }
-    return iSourceFileSize;
+
+    nSourceFileSize += nRead;
+
+    if(nRead != sizeof(vcBuffer))
+    {
+    	break;
+    }
+  }
+
+  return nSourceFileSize;
 }
