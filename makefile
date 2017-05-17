@@ -37,6 +37,7 @@ Disk.img: 00.BootLoader/BootLoader.bin 01.Kernel32/Kernel32.bin
 	./04.Utility/00.ImageMaker/ImageMaker.exe $^
 	rm -f 00.BootLoader/BootLoader.bin
 	rm -f 01.Kernel32/Kernel32.bin
+	rm -f 04.Utility/00.ImageMaker/ImageMaker.exe
 	
 	@echo
 	@echo ========== All Build Complete ==========
@@ -48,7 +49,6 @@ Utility:
 	@echo 
 
 	make -C 04.Utility
-	rm -f 04.Utility/00.ImageMaker/ImageMaker.exe
 
 	@echo 
 	@echo =========== Utility Build Complete ===========
