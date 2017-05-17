@@ -22,8 +22,8 @@ $(OBJECTDIRECTORY)/EntryPoint.bin: $(SOURCEDIRECTORY)/EntryPoint.s
 	$(NASM32) -o $@ $<
 	
 dep:
-	@echo === Make Dependancy File ===
-	make -C $(OBJECTDIRECTORY) -f ../makefile InternalDependancy
+	@echo === Make Dependency File ===
+	make -C $(OBJECTDIRECTORY) -f ../makefile InternalDependency
 	@echo === Dependency Search Complete ====
 	
 ExecuteInternalBuild: dep
@@ -44,27 +44,27 @@ clean:
 # recalled by Make, Executed by Temp directory
 ##################################################
 CENTRYPOINTOBJECTFILE = Main.o
-CSOURCEFILE = $(wildcard ../$(SOURCEDIRECTORY)/*.c)
+CSOURCEFILES = $(wildcard ../$(SOURCEDIRECTORY)/*.c)
 ASSEMBLYSOURCEFILES = $(wildcard ../$(SOURCEDIRECTORY)/*.asm)
 COBJECTFILES = $(subst Main.o, , $(notdir $(patsubst %.c,%.o,$(CSOURCEFILES))))
 ASSEMBLYOBJECTFILES = $(notdir $(patsubst %.asm,%.o,$(ASSEMBLYSOURCEFILES)))
 
 #	.c 파일을 .o 파일로 바꾸는 규칙 정의
 %.o: ../$(SOURCEDIRECTORY)/%.c
-	$(GCC32) -C $<
+	$(GCC32) -c $<
 	
 # .asm 파일을 .o 파일로 바꾸는 규칙 정의
 %.o: ../$(SOURCEDIRECTORY)/%.asm
 	$(NASM32) -f elf32 -o $@ $<
 	
-InternalDependancy:
-	$(GCC32) -MM $(CSOURCEFILE) > Dependancy.dep
+InternalDependency:
+	$(GCC32) -MM $(CSOURCEFILES) > Dependency.dep
 	
 Kernel32.elf: $(CENTRYPOINTOBJECTFILE) $(COBJECTFILES) $(ASSEMBLYOBJECTFILES)
 	$(LD32) -o $@ $^
 	
-ifeq (DEPENDANCY.dep, $(wildcard Dependancy.dep))
-include Dependancy.dep
+ifeq (Dependency.dep, $(wildcard Dependency.dep))
+include Dependency.dep
 endif
 
 

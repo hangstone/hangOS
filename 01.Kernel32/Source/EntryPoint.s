@@ -11,6 +11,23 @@ START:
   mov   ds, ax          ;;  AX 레지스터의 값을 DS 세그먼트 레지스터에 설정
   mov   es, ax          ;;  ES 세그먼트 레지스터에 설정
 
+  ;;  A20 게이트를 활성화
+  ;;  BIOS를 이용한 전환이 실패했을 떄 시스템 컨트롤 포트로 전환 시도
+  ;;  enable gate 'A20' using BIOS service
+  mov   ax, 0x2401      ;;  A20 게이트 활성화 서비스 결정
+  int   0x15            ;;  BIOS 인터럽트 서비스 호출
+
+  jc    .A20GATEERROR   ;;  A20 게이트 활성화가 성공했는지 확인
+  jmp   .A20GATESUCCESS
+
+.A20GATEERROR:
+  ;;  에러 발생 시, 시스템 컨트롤 포트로 전환 시도
+  in    al, 0x92        ;;  시스템 컨트롤 포트(0x92)에서 1-byte를 읽어 AL 레지스터에 저장
+  or    al, 0x02        ;;  읽은 값에 A20 게이트 비트(비트 1)를 1로 설정
+  and   al, 0xFE        ;;  시스템 리셋 방지를 위해 0xFE와 AND 연산하여 비트 0을 '0'으로 설정
+  out   0x92, al        ;;  시스템 컨트롤 포트(0x92)에 변경된 값을 1바이트 설정
+
+.A20GATESUCCESS:
   cli                   ;;  interrupt가 발생하지 못하도록 설정
                         ;;  왜냐하면, interrupt 설정 이전에 interrupt가 발생하게 되면,
                         ;;  프로세서는 interrupt 처리 함수를 찾을 수 없으므로 문제가 발생할 수 있다

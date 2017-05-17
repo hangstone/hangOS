@@ -35,7 +35,10 @@ int   main(int argc, char* argv[])
       exit(-1);
   }
 
-  if ((nTargetFd = open("Disk.img", O_RDWR|O_CREAT|O_TRUNC|O_BINARY|S_IREAD|S_IWRITE)) == -1)
+  nTargetFd = open("Disk.img",
+									 O_RDWR | O_CREAT | O_TRUNC | O_BINARY,
+									 S_IREAD |S_IWRITE);
+  if (-1 == nTargetFd)
   {
       fprintf(stderr, "[ERROR] faied to open Disk.img.\n");
       exit(-1);
@@ -43,7 +46,8 @@ int   main(int argc, char* argv[])
 
   //  부트로더 파일을 읽어서 모든 내용을 디스크 이미지 파일로 복사
   printf("[INFO] Copy boot loader to image file\n");
-  if ((nSourceFd = open(argv[1], O_RDONLY|O_BINARY)) == -1)
+  nSourceFd = open(argv[1], O_RDONLY | O_BINARY);
+  if (-1 == nSourceFd)
   {
     fprintf(stderr, "[ERROR] failed to open %s\n", argv[1]);
     exit(-1);
@@ -60,7 +64,7 @@ int   main(int argc, char* argv[])
          nBootLoaderSize);
 
   //  32-bit 커널 파일을 열어서 모든 내용을 디스크 이미지 파일로 복사
-  if ((nSourceFd == open(argv[2], O_RDONLY|O_BINARY)) == -1)
+  if ((nSourceFd = open(argv[2], O_RDONLY | O_BINARY)) == -1)
   {
     fprintf(stderr, "[ERROR] failed to open %s", argv[2]);
     exit(-1);
@@ -128,7 +132,7 @@ void  WriteKernelInformation(int nTargetFd, int nKernelSectorCount)
     long lPosition;
 
     // 파일의 시작에서 5바이트 떨어진 위치가 커널의 총 섹터 수 정보를 나타냄
-    lPosition = lseek( nTargetFd, (off_t)5, SEEK_SET );
+    lPosition = lseek( nTargetFd, 5, SEEK_SET );
     if( lPosition == -1 )
     {
         fprintf( stderr, "lseek fail. Return value = %d, errno = %d, %d\n",
