@@ -24,6 +24,7 @@ Kernel32:
 	rm -f 01.Kernel32/Temp/Main.o
 	rm -f 01.Kernel32/Temp/Kernel32.elf.bin
 	rm -f 01.Kernel32/Temp/Page.o
+	rm -f 01.Kernel32/Temp/ModeSwitch.o
 	
 	@echo
 	@echo ========== Build Complete ==========

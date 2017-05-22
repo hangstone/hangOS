@@ -7,6 +7,7 @@
 
 #include "Types.h"
 #include "Page.h"
+#include "ModeSwitch.h"
 
 void kPrintString(int nX, int nY, const char* pszString);
 BOOL kInitializeKernel64Area(void);
@@ -15,6 +16,10 @@ BOOL kIsMemoryEnough(void);
 void Main(void)
 {
 	BOOL bRet = FALSE;
+	DWORD dwEAX, dwEBX, dwECX, dwEDX;
+	char szVendorString[13] = {0,};		//	제조사 문자열을 담을 문자열 버퍼
+																		//	kPrintString() 함수로 출력하기 위함
+
   kPrintString(0, 3, "C Language Kernel Started........................[Pass]");
 
   //	최소 메모리 크기를 만족하는 지 검사
@@ -51,6 +56,32 @@ void Main(void)
   kPrintString(0, 6, "IA-32e Page Table Initialize.....................[    ]");
   kInitializePageTables();
   kPrintString(50, 6, "Pass");
+
+  //	프로세서 제조사 정보 얻기
+  kReadCPUID(0x00, &dwEAX, &dwEBX, &dwECX, &dwEDX);
+  *(DWORD *)szVendorString = dwEBX;					//	문자가 저장된 순서가 하위바이트에서 상위바이트의
+  *((DWORD *)szVendorString + 1) = dwEDX;		//	순서이므로 그대로 문자열 버퍼에 복사하면 정상적으로 출력가능
+  *((DWORD *)szVendorString + 2) = dwECX;		//	4-byte씩 한번에 복사하려고 DWORD로 캐스팅 함
+  kPrintString(0, 7, "64bit Mode Vendor String.........................[            ]");
+  kPrintString(50, 7, szVendorString);
+
+  //	64비트 지원 유무 확인
+  kReadCPUID(0x80000001, &dwEAX, &dwEBX, &dwECX, &dwEDX);
+  kPrintString(0, 8, "64bit Mode Support Check.........................[    ]");
+  if (dwEDX & (1<<29))
+  {
+  	kPrintString(50, 8, "Pass");
+  }
+  else
+  {
+  	kPrintString(50, 8, "Fail");
+  	kPrintString(0, 9, "This Processor does not support 64bit Mode!!");
+  	while(1);
+  }
+
+  //	convert to 'IA-32e' mode
+  kPrintString(0, 9, "Switch To IA-32e Mode");
+  //kSwitchAndExecute64bitKernel();
 
   while(1);
 }
