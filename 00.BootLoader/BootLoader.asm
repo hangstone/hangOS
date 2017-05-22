@@ -7,8 +7,9 @@ SECTION .text   ;;  text 섹션(segment)을 정의
 jmp 0x07C0:START      ;;  CS 세그먼트의 레지스터에 0x07C0을 복사하면서 START 레이블로 이동
 
 ;;  disk 읽기와 관련한 변수
-TOTALSECTORCOUNT:   dw  0x02      ;;  bootloader를 제외한  OS 이미지 크기
-                                  ;;  최대 1152 sector(0x90000 byte)까지 가능
+TOTALSECTORCOUNT:     dw  0x02      ;;  bootloader를 제외한  OS 이미지 크기
+                                    ;;  최대 1152 sector(0x90000 byte)까지 가능
+KERNEL32SECTORCOUNT:  dw  0x02      ;;  보호 모드 커널의 총 섹터 수
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  코드 영역

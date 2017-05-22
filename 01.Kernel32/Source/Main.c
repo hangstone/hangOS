@@ -9,9 +9,16 @@
 #include "Page.h"
 #include "ModeSwitch.h"
 
+//  문자열을 X, Y 위치에 출력
 void kPrintString(int nX, int nY, const char* pszString);
+//	IA-32e 모드용 커널 영역을 '0'으로 초기화
+//		1MB ~ 6MB 까지 영역을 초기화
 BOOL kInitializeKernel64Area(void);
+//	HANG64 OS를 실행하기에 충분한 메모리를 가지고 있는지 체크
+//		64MB 이상의 메모리를 가지고 있는지 검사
 BOOL kIsMemoryEnough(void);
+//	IA-32e 모드 커널을 0x200000(2MB) 어드레스에 복사
+void kCopyKernel64ImageTo2MByte(void);
 
 void Main(void)
 {
@@ -20,7 +27,7 @@ void Main(void)
 	char szVendorString[13] = {0,};		//	제조사 문자열을 담을 문자열 버퍼
 																		//	kPrintString() 함수로 출력하기 위함
 
-  kPrintString(0, 3, "C Language Kernel Started........................[Pass]");
+  kPrintString(0, 3, "Protected Mode C Language Kernel Start...........[Pass]");
 
   //	최소 메모리 크기를 만족하는 지 검사
   kPrintString(0, 4, "Minimum Memory Size Check........................[    ]");
@@ -79,14 +86,18 @@ void Main(void)
   	while(1);
   }
 
+  //	IA-32e 모드 커널을 0x200000(2MB) 어드레스로 이동
+  kPrintString(0, 9, "Copy IA-32e Kernel to 2MB Address................[    ]");
+  kCopyKernel64ImageTo2MByte();
+  kPrintString(50, 9, "Pass");
+
   //	convert to 'IA-32e' mode
-  kPrintString(0, 9, "Switch To IA-32e Mode");
-  //kSwitchAndExecute64bitKernel();
+  kPrintString(0, 10, "Switch To IA-32e Mode");
+  kSwitchAndExecute64BitKernel();
 
   while(1);
 }
 
-//  문자열 출력 함수
 void kPrintString(int nX, int nY, const char* pszString)
 {
   CHARACTER* pstScreen = (CHARACTER *)0xB8000;
@@ -148,4 +159,29 @@ BOOL kIsMemoryEnough(void)
 	}
 
 	return TRUE;
+}
+
+void kCopyKernel64ImageTo2MByte(void)
+{
+	WORD 		wKernel32SectorCount;
+	WORD 		wTotalKernelSectorCount;
+	WORD		wIA32eSectorCount;
+	DWORD* 	pSourceAddress;
+	DWORD* 	pDestinationAddress;
+
+	//	0x7C05에 총 커널 섹터 수, 0x7C08에 보호모드 커널 섹터 수가 들어 있음
+	wTotalKernelSectorCount = *((WORD *) 0x7C05);
+	wKernel32SectorCount = *((WORD *) 0x7C07);
+
+	pSourceAddress = (DWORD *)(0x10000 + (wKernel32SectorCount * 512));
+	pDestinationAddress = (DWORD *)0x200000;
+
+	//	IA-32e 모드 커널 섹터 크기만큼 복사
+	wIA32eSectorCount = wTotalKernelSectorCount - wKernel32SectorCount;
+	for (int nIdx=0; nIdx < 512 * wIA32eSectorCount / 4; nIdx++)
+	{
+		*pDestinationAddress = *pSourceAddress;
+		pDestinationAddress++;
+		pSourceAddress++;
+	}
 }

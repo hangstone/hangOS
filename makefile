@@ -1,4 +1,4 @@
-all: BootLoader Kernel32 Utility Disk.img
+all: BootLoader Kernel32 Kernel64 Utility Disk.img
 	mv -f Disk.img C:\Project\hangOS\99.Test\Disk.img
 
 BootLoader:
@@ -30,7 +30,21 @@ Kernel32:
 	@echo ========== Build Complete ==========
 	@echo
 	
-Disk.img: 00.BootLoader/BootLoader.bin 01.Kernel32/Kernel32.bin
+Kernel64:
+	@echo 
+	@echo ========== Build 64bit Kernel ==========
+	@echo
+	
+	make -C 02.Kernel64
+	rm -f 02.Kernel64/Temp/Dependency.dep
+	rm -f 02.Kernel64/Temp/Kernel64.elf
+	rm -f 02.Kernel64/Temp/Main.o
+	
+	@echo
+	@echo ========== Build Complete ==========
+	@echo
+	
+Disk.img: 00.BootLoader/BootLoader.bin 01.Kernel32/Kernel32.bin 02.Kernel64/Kernel64.bin
 	@echo
 	@echo ========== Disk Image Build Start ==========
 	@echo
@@ -39,7 +53,7 @@ Disk.img: 00.BootLoader/BootLoader.bin 01.Kernel32/Kernel32.bin
 	./04.Utility/00.ImageMaker/ImageMaker.exe $^
 	rm -f 00.BootLoader/BootLoader.bin
 	rm -f 01.Kernel32/Kernel32.bin
-	rm -f 04.Utility/00.ImageMaker/ImageMaker.exe
+#	rm -f 04.Utility/00.ImageMaker/ImageMaker.exe
 	
 	@echo
 	@echo ========== All Build Complete ==========
@@ -59,5 +73,6 @@ Utility:
 clean:
 	make -C 00.BootLoader clean
 	make -C 01.Kernel32 clean
+	make -C 02.Kernel64 clean
 	make -C 04.Utility clean
 	rm -f Disk.img
