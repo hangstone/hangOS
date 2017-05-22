@@ -19,7 +19,7 @@ void kInitializePageTables(void)
 	//	첫번쨰 엔트리 외에 나머지는 모두 '0'으로 초기화
 	pstPML4TEntry = (PML4TENTRY *)(PAGE_PML4_DEFAULT_ADDRESS);
 	kSetPageEntryData(&(pstPML4TEntry[0]), 0x00, 0x101000, PAGE_FLAGS_DEFAULT, 0);
-	for (int nIdx=0; nIdx<PAGE_MAXENTRYCOUNT; nIdx++)
+	for (int nIdx=1; nIdx<PAGE_MAXENTRYCOUNT; nIdx++)
 	{
 		kSetPageEntryData(&(pstPML4TEntry[nIdx]), 0, 0, 0, 0);
 	}

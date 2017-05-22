@@ -20,6 +20,12 @@ START:
   mov ax, 0xB800      ;;  비디오 메모리의 시작 어드레스(0xB800)를 세그먼트 레지스터 값으로 변환
   mov es, ax          ;;   es 세그먼트 레지스터에 설정
 
+  ;;  스택을  0x0000:0000 ~ 0x0000:FFFF 영역에 64KB 크기로 생성
+  mov ax, 0x0000      ;;  stack segment의 시작 address(0x0000)를 segment register 값으로 변환
+  mov ss, ax          ;;  SS 세그먼트 레지스터에 설정
+  mov sp, 0xFFFE      ;;  SP 레지스터의 address를 0xFFFE로 설정
+  mov bp, 0xFFFE      ;;  BP 레지스터의 address를 0xFFFE로 설정
+
   ;;  화면을 지우는 코드
   mov si, 0           ;;  SI 레지스터(문자열 원본 인덱스 레지스터)를 초기화
 

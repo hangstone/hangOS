@@ -31,7 +31,7 @@
 //	PDP 테이블은 0x100000(1MB)에서 시작하여 4KB의 영역을 차지
 #define PAGE_PDP_DEFAULT_ADDRESS		0x101000
 //	PD 의 시작 주소
-#define PAGE_PDE_DEFAULT_ADDRESS		0x101000
+#define PAGE_PDE_DEFAULT_ADDRESS		0x102000
 
 //	structures
 #pragma pack(push, 1)

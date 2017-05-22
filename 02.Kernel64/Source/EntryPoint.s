@@ -15,7 +15,7 @@ START:
   mov   fs, ax          ;;  ES 세그먼트 레지스터에 설정
   mov   gs, ax          ;;  ES 세그먼트 레지스터에 설정
 
-  //  stack을 0x600000 ~ 0x6FFFFF 영역에 1MB 크기로 생성
+  ;;  stack을 0x600000 ~ 0x6FFFFF 영역에 1MB 크기로 생성
   mov   ss, ax          ;;  SS 세그먼트 셀렉터에 설정
   mov   rsp, 0x6FFFF8   ;;  RSP 레지스터의 address를 0x6FFFF8로 설정
   mov   rbp, 0x6FFFF8   ;;  RBP 레지스터의 address를 0x6FFFF8로 설정
