@@ -7,13 +7,13 @@
 
 #include "Types.h"
 
-//  ¹®ÀÚ¿­ Ãâ·Â ÇÔ¼ö
+//  ë¬¸ìì—´ ì¶œë ¥ í•¨ìˆ˜
 void kPrintString(int nX, int nY, const char* pszString);
 
 void Main(void)
 {
-	kPrintString(0, 10, "Switch To IA-32e Mode Success!!");
-	kPrintString(0, 11, "IA-32e C Language Kernel Start...................[Pass]");
+  kPrintString(0, 10, "Switch To IA-32e Mode Success!!");
+  kPrintString(0, 11, "IA-32e C Language Kernel Start...................[Pass]");
 }
 
 void kPrintString(int nX, int nY, const char* pszString)
