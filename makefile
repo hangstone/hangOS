@@ -39,6 +39,7 @@ Kernel64:
 	rm -f 02.Kernel64/Temp/Dependency.dep
 	rm -f 02.Kernel64/Temp/Kernel64.elf
 	rm -f 02.Kernel64/Temp/Main.o
+	rm -f 02.Kernel64/Temp/EntryPoint.o
 	
 	@echo
 	@echo ========== Build Complete ==========
@@ -53,7 +54,8 @@ Disk.img: 00.BootLoader/BootLoader.bin 01.Kernel32/Kernel32.bin 02.Kernel64/Kern
 	./04.Utility/00.ImageMaker/ImageMaker.exe $^
 	rm -f 00.BootLoader/BootLoader.bin
 	rm -f 01.Kernel32/Kernel32.bin
-#	rm -f 04.Utility/00.ImageMaker/ImageMaker.exe
+	rm -f 02.Kernel64/Kernel64.bin
+	rm -f 04.Utility/00.ImageMaker/ImageMaker.exe
 	
 	@echo
 	@echo ========== All Build Complete ==========
