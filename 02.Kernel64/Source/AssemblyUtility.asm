@@ -15,7 +15,7 @@ kInPortByte:
   push  rdx       ;;  함수에서 임시로 사용하는 레지스터를 스택에 저장
                   ;;  함수의 마지막 부분에서 스택에 삽입된 값을 꺼내 복원
   mov   rdx, rdi  ;;  RDX 레지스터에 1st parameter(포트번호)를 저장
-  mov   rdx, 0    ;;  RAX 레지스터를 초기화
+  mov   rax, 0    ;;  RAX 레지스터를 초기화
   in    al, dx    ;;  DX 레지스터에 저장된 포트 어드레스에서 한 바이트를 읽어 AL 레지스터에 저장
                   ;;  AL 레지스터는 함수의 반환 값으로 사용됨
   pop   rdx       ;;  함수에서 사용이 끝난 레지스터를 복원

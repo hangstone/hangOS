@@ -52,7 +52,7 @@ void Main(void)
         //  키가 눌러졌으면 키의 ASCII code 값을 화면에 출력
         if (bFlags & KEY_FLAGS_DOWN)
         {
-          kPrintString(nPositionX, 13, pszTypedString);
+          kPrintString(nPositionX++, 13, pszTypedString);
         }
       }
     }
