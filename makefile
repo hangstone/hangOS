@@ -40,6 +40,8 @@ Kernel64:
 	rm -f 02.Kernel64/Temp/Kernel64.elf
 	rm -f 02.Kernel64/Temp/Main.o
 	rm -f 02.Kernel64/Temp/EntryPoint.o
+	rm -f 02.Kernel64/Temp/AssemblyUtility.o
+	rm -f 02.Kernel64/Temp/Keyboard.o
 	
 	@echo
 	@echo ========== Build Complete ==========

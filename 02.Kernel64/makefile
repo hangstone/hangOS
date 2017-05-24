@@ -37,26 +37,26 @@ clean:
 ##################################################
 # recalled by Make, Executed by Temp directory
 ##################################################
-#	ºôµåÇÒ ¾î¼Àºí¸®¾î ¿£Æ®¸® Æ÷ÀÎÆ® ¼Ò½º ÆÄÀÏ Á¤ÀÇ, Temp µð·ºÅä¸®¸¦ ±âÁØÀ¸·Î ¼³Á¤
+#	ë¹Œë“œí•  ì–´ì…ˆë¸”ë¦¬ì–´ ì—”íŠ¸ë¦¬ í¬ì¸íŠ¸ ì†ŒìŠ¤ íŒŒì¼ ì •ì˜, Temp ë””ë ‰í† ë¦¬ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì„¤ì •
 ENTRYPOINTSOURCEFILE = ../$(SOURCEDIRECTORY)/EntryPoint.s
 ENTRYPOINTOBJECTFILE = EntryPoint.o
-#	ºôµåÇÒ C ¼Ò½º ÆÄÀÏ Á¤ÀÇ, Temp µð·ºÅä¸®¸¦ ±âÁØÀ¸·Î ¼³Á¤
+#	ë¹Œë“œí•  C ì†ŒìŠ¤ íŒŒì¼ ì •ì˜, Temp ë””ë ‰í† ë¦¬ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì„¤ì •
 CSOURCEFILES = $(wildcard ../$(SOURCEDIRECTORY)/*.c)
 ASSEMBLYSOURCEFILES = $(wildcard ../$(SOURCEDIRECTORY)/*.asm)
 COBJECTFILES = $(notdir $(patsubst %.c,%.o,$(CSOURCEFILES)))
 ASSEMBLYOBJECTFILES = $(notdir $(patsubst %.asm,%.o,$(ASSEMBLYSOURCEFILES)))
 
-# ¾î¼Àºí¸®¾î ¿£Æ®¸® Æ÷ÀÎÆ® ºôµå
-#	kernel entry point ÆÄÀÏÀº object ÆÄÀÏÀÇ ÇüÅÂ·Î ÄÄÆÄÀÏµÇ¾î C¾ð¾î Ä¿³Î°ú ÇÔ²² ¸µÅ©µÈ´Ù
-#	±×·¯¹Ç·Î kernel entry point ÆÄÀÏÀÌ ¸µÅ© ¸ñ·ÏÀÇ °¡Àå ¾Õ¿¡ À§Ä¡ÇÏµµ·Ï ¼öÁ¤ÇÑ´Ù
+#	ì–´ì…ˆë¸”ë¦¬ì–´ ì—”íŠ¸ë¦¬ í¬ì¸íŠ¸ ë¹Œë“œ
+#		kernel entry point íŒŒì¼ì€ object íŒŒì¼ì˜ í˜•íƒœë¡œ ì»´íŒŒì¼ë˜ì–´ Cì–¸ì–´ ì»¤ë„ê³¼ í•¨ê»˜ ë§í¬ëœë‹¤
+#		ê·¸ëŸ¬ë¯€ë¡œ kernel entry point íŒŒì¼ì´ ë§í¬ ëª©ë¡ì˜ ê°€ìž¥ ì•žì— ìœ„ì¹˜í•˜ë„ë¡ ìˆ˜ì •í•œë‹¤
 $(ENTRYPOINTOBJECTFILE): $(ENTRYPOINTSOURCEFILE)
 	$(NASM64) -o $@ $<
 	
-#	.c ÆÄÀÏÀ» .o ÆÄÀÏ·Î ¹Ù²Ù´Â ±ÔÄ¢ Á¤ÀÇ
+#	.c íŒŒì¼ì„ .o íŒŒì¼ë¡œ ë°”ê¾¸ëŠ” ê·œì¹™ ì •ì˜
 %.o: ../$(SOURCEDIRECTORY)/%.c
 	$(GCC64) -c $<
 	
-# .asm ÆÄÀÏÀ» .o ÆÄÀÏ·Î ¹Ù²Ù´Â ±ÔÄ¢ Á¤ÀÇ
+# .asm íŒŒì¼ì„ .o íŒŒì¼ë¡œ ë°”ê¾¸ëŠ” ê·œì¹™ ì •ì˜
 %.o: ../$(SOURCEDIRECTORY)/%.asm
 	$(NASM64) -o $@ $<
 	
