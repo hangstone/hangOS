@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Descriptor.h
  *
  *  Created on: 2017. 9. 11.
@@ -67,7 +67,7 @@
 //  GDT 테이블의 크기
 #define GDT_TABLESIZE   ( (sizeof(GDTENTRY8) * GDT_MAXENTRY8COUNT) + \
                           (sizeof(GDTENTRY16) * GDT_MAXENTRY16COUNT) )
-#define TSS_SEGMENTSIZE ( sizeof(GDT_TSSSEGMENT) )
+#define TSS_SEGMENTSIZE ( sizeof(TSSSEGMENT) )
 
 //==============================================================================
 //  IDT
@@ -92,10 +92,10 @@
 #define IDT_MAXENTRYCOUNT     100
 //  IDT의 start address, TSS segment의 뒤쪽에 위치
 #define IDTR_STARTADDRESS     ( GDTR_STARTADDRESS + sizeof(GDTR) + \
-                                GDT_TABLESIZE | TSS_SEGMENTSIZE)
+                                GDT_TABLESIZE + TSS_SEGMENTSIZE)
 #define IDT_STARTADDRESS      ( IDTR_STARTADDRESS + sizeof(IDTR) )
 //  IDT 테이블의 전체 크기
-#define IDT_TABLESIE          ( IDT_MAXENTRYCOUNT * sizeof(IDTENTRY))
+#define IDT_TABLESIZE         ( IDT_MAXENTRYCOUNT * sizeof(IDTENTRY))
 
 //  IST의 start address
 #define IST_STARTADDRESS      0x700000

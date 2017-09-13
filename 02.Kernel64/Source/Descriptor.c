@@ -105,7 +105,7 @@ void kInitializeIDTTables(void)
   //  IDT 테이블의 정보 생성
   pstEntry = (IDTENTRY *)(IDTR_STARTADDRESS + sizeof(IDTR));
   pstIDTR->qwBaseAddress = (QWORD)pstEntry;
-  pstIDTR->wLimit = IDT_TABLESIE - 1;
+  pstIDTR->wLimit = IDT_TABLESIZE - 1;
 
   //  0~99까지 vector를 모두 DummyHandler로 연결
   for (int nIdx = 0; nIdx < IDT_MAXENTRYCOUNT; nIdx++)
@@ -139,7 +139,7 @@ void kDummyHandler(void)
 {
   kPrintString(0, 0,  "=======================================================");
   kPrintString(0, 1,  "          Dummy Interrupt Handler Execute~!!!          ");
-  kPrintString(0, 2,  "           Interrupt or Exception Occur~!!!            ");
+  kPrintString(0, 2,  "            Interrupt or Exception Occur~!!            ");
   kPrintString(0, 3,  "=======================================================");
 
   while(1);
