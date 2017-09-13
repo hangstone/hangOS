@@ -3,7 +3,7 @@
 SECTION .text   ;;  text 섹션(segment)을 정의
 
 ;;  C언어에서 호출할 수 있도록 이름을 노출 함
-global kInPortByte, kOutPortByte
+global kInPortByte, kOutPortByte, kLoadGDTR, kLoadTR, kLoadIDTR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  코드 영역
@@ -34,3 +34,22 @@ kOutPortByte:
   pop   rax       ;;  함수에서 사용이 끝난 레지스터를 복원
   pop   rdx
   ret             ;;  함수를 호출한 다음 코드의 위치로 복귀
+
+;;  GDTR 레지스터에 GDT 테이블을 설정
+;;    PARAM: GDT 테이블의 정보를 저장하는 자료구조의 address
+kLoadGDTR:
+  lgdt [rdi]      ;;  parameter 1(GDTR의 address)를 프로세서에 로드하여 GDT 테이블을 설정
+  ret
+
+;;  TR 레지스터에 TSS 세그먼트 디스크립터 설정
+;;    PARAM: TSS 세그먼트 디스크립터의 오프셋
+kLoadTR:
+  ltr di          ;;  parameter 1(TSS segment descriptor의 offset)을 프로세서에 설정하여
+                  ;;  TSS segment를 로드
+  ret
+
+;;  IDTR 레지스터에 IDT 테이블을 설정
+;;    PARAM: IDT 테이블의 정보를 저장하는 자료구조의 address
+kLoadIDTR:
+  lidt [rdi]      ;;  parameter1(IDTR의 address)을 프로세서에 로드하여 IDT 테이블을 설정
+  ret
