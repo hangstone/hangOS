@@ -84,8 +84,10 @@
 #define IDT_FLAGS_IST1        1
 
 //  실제로 사용할 매크로
-#define IDT_FLAGS_KERNEL      ( IDT_FLAGS_DPL0 | IDT_FLAGS_P )
-#define IDT_FLAGS_USER        ( IDT_FLAGS_DPL3 | IDT_FLAGS_P )
+#define IDT_FLAGS_KERNEL      ( IDT_FLAGS_DPL0 | IDT_FLAGS_P )    //  인터럽와 예외처리용 게이트 디스크립터의 플래그
+#define IDT_FLAGS_USER        ( IDT_FLAGS_DPL3 | IDT_FLAGS_P )    //  어플리케이션이 소프트웨어 인터럽트(SWI)를 사용하여
+                                                                  //  커널 모드로 진입하는 데 사용할 게이트 디스크립터의 flag
+                                                                  //  (for system call)
 
 //  기타 IDT에 관련된 매크로
 //  IDT 엔트리의 갯수
@@ -107,7 +109,7 @@
 #pragma pack(push ,1)
 
 //  GDTR과 IDTR 구조체
-typedef struct kGDTRStruct
+typedef struct kGDTRStruct    //  IA-32e 모드를 위해 기준 주소 필드를 64-bit로 정의한 자료구조
 {
   WORD  wLimit;
   QWORD qwBaseAddress;
@@ -117,7 +119,7 @@ typedef struct kGDTRStruct
 } GDTR, IDTR;
 
 //  8-byte 크기의 GDT entry 구조
-typedef struct kGDTEntry8Struct
+typedef struct kGDTEntry8Struct   //  8-byte 크기의 코드와 데이터 세그먼트 디스크립터를 위한 자료구조
 {
   WORD  wLowerLimit;
   WORD  wLowerBaseAddress;
@@ -130,7 +132,7 @@ typedef struct kGDTEntry8Struct
 } GDTENTRY8;
 
 //  16-byte 크기의 GDT 엔트리 구조
-typedef struct kGDTEntry16Struct
+typedef struct kGDTEntry16Struct  //  16-byte 크기의 TSS 세그먼트 디스크립터를 위한 자료구조
 {
   WORD  wLowerLimit;
   WORD  wLowerBaseAddress;
@@ -145,7 +147,7 @@ typedef struct kGDTEntry16Struct
 } GDTENTRY16;
 
 //  TSS Data Structure
-typedef struct kTSSDataStruct
+typedef struct kTSSDataStruct   //  104-byte 크기의 TSS 세그먼트를 위한 자료구조
 {
   DWORD dwReserved;
   QWORD qwRsp[3];

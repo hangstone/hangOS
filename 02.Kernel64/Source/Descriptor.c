@@ -63,7 +63,7 @@ void kSetGDTEntry8(GDTENTRY8* pstEntry,
   pstEntry->wLowerBaseAddress = dwBaseAddress & 0xFFFF;
   pstEntry->bUpperBaseAddress1 = (dwBaseAddress >> 16) & 0xFF;
   pstEntry->bTypeAndLowerFlag = bLowerFlags | bType;
-  pstEntry->bUpperLimitAndUpperFlag = ((dwLimit >> 16) & 0xFF) | bUpperFlags;
+  pstEntry->bUpperLimitAndUpperFlag = ((dwLimit >> 16) & 0x0F) | bUpperFlags;
   pstEntry->bUpperBaseAddress2 = (dwBaseAddress >> 24) & 0xFF;
 }
 
@@ -78,7 +78,7 @@ void kSetGDTEntry16(GDTENTRY16* pstEntry,
   pstEntry->wLowerBaseAddress = qwBaseAddress & 0xFFFF;
   pstEntry->bMiddleBaseAddress1 = (qwBaseAddress >> 16) & 0xFF;
   pstEntry->bTypeAndLowerFlag = bLowerFlags | bType;
-  pstEntry->bUpperLimitAndUpperFlag = ((dwLimit >> 16) & 0xFF) | bUpperFlags;
+  pstEntry->bUpperLimitAndUpperFlag = ((dwLimit >> 16) & 0x0F) | bUpperFlags;
   pstEntry->bMiddleBaseAddress2 = (qwBaseAddress >> 24) & 0xFF;
   pstEntry->dwUpperBaseAddress = qwBaseAddress >> 32;
   pstEntry->dwReserved = 0;
