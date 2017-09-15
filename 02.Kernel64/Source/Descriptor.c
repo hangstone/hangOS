@@ -64,7 +64,7 @@ void kSetGDTEntry8(GDTENTRY8* pstEntry,
   pstEntry->wLowerBaseAddress = dwBaseAddress & 0xFFFF;
   pstEntry->bUpperBaseAddress1 = (dwBaseAddress >> 16) & 0xFF;
   pstEntry->bTypeAndLowerFlag = bLowerFlags | bType;
-  pstEntry->bUpperLimitAndUpperFlag = ((dwLimit >> 16) & 0x0F) | bUpperFlags;
+  pstEntry->bUpperLimitAndUpperFlag = ((dwLimit >> 16) & 0xFF) | bUpperFlags;
   pstEntry->bUpperBaseAddress2 = (dwBaseAddress >> 24) & 0xFF;
 }
 
@@ -79,7 +79,7 @@ void kSetGDTEntry16(GDTENTRY16* pstEntry,
   pstEntry->wLowerBaseAddress = qwBaseAddress & 0xFFFF;
   pstEntry->bMiddleBaseAddress1 = (qwBaseAddress >> 16) & 0xFF;
   pstEntry->bTypeAndLowerFlag = bLowerFlags | bType;
-  pstEntry->bUpperLimitAndUpperFlag = ((dwLimit >> 16) & 0x0F) | bUpperFlags;
+  pstEntry->bUpperLimitAndUpperFlag = ((dwLimit >> 16) & 0xFF) | bUpperFlags;
   pstEntry->bMiddleBaseAddress2 = (qwBaseAddress >> 24) & 0xFF;
   pstEntry->dwUpperBaseAddress = qwBaseAddress >> 32;
   pstEntry->dwReserved = 0;
@@ -130,20 +130,20 @@ void kInitializeIDTTables(void)
   kSetIDTEntryForSimple(&(pstEntry[16]), kISRFPUError);
   kSetIDTEntryForSimple(&(pstEntry[17]), kISRAlignmentCheck);
   kSetIDTEntryForSimple(&(pstEntry[18]), kISRMachineCheck);
-  kSetIDTEntryForSimple(&(pstEntry[19]), kISRSMDError);
-  kSetIDTEntryForSimple(&(pstEntry[20]), kISRException);
+  kSetIDTEntryForSimple(&(pstEntry[19]), kISRSIMDError);
+  kSetIDTEntryForSimple(&(pstEntry[20]), kISREtcException);
 
   for (int nIdx=21; nIdx<32; nIdx++)
   {
-    kSetIDTEntryForSimple(&(pstEntry[nIdx]), kISRException);
+    kSetIDTEntryForSimple(&(pstEntry[nIdx]), kISREtcException);
   }
   
   //======================================================================
   //  예외 ISR 등록
   //======================================================================
   kSetIDTEntryForSimple(&(pstEntry[32]), kISRTimer);
-  kSetIDTEntryForSimple(&(pstEntry[33]), kISRSlavePIC);
-  kSetIDTEntryForSimple(&(pstEntry[34]), kISRKeyboard);
+  kSetIDTEntryForSimple(&(pstEntry[33]), kISRKeyboard);
+  kSetIDTEntryForSimple(&(pstEntry[34]), kISRSlavePIC);
   kSetIDTEntryForSimple(&(pstEntry[35]), kISRSerialPort2);
   kSetIDTEntryForSimple(&(pstEntry[36]), kISRSerialPort1);
   kSetIDTEntryForSimple(&(pstEntry[37]), kISRParallelPort2);
@@ -161,17 +161,6 @@ void kInitializeIDTTables(void)
   for (int nIdx=48; nIdx<IDT_MAXENTRYCOUNT; nIdx++)
   {
     kSetIDTEntryForSimple(&(pstEntry[nIdx]), kISREtcInterrupts);
-  }
-  
-  //  0~99까지 vector를 모두 DummyHandler로 연결
-  for (int nIdx = 0; nIdx < IDT_MAXENTRYCOUNT; nIdx++)
-  {
-    kSetIDTEntry(&(pstEntry[nIdx]),
-                 kDummyHandler,
-                 0x08,
-                 IDT_FLAGS_IST1,
-                 IDT_FLAGS_KERNEL,
-                 IDT_TYPE_INTERRUPT);
   }
 }
 
@@ -193,20 +182,11 @@ void kSetIDTEntry(IDTENTRY* pstEntry,
 
 void kSetIDTEntryForSimple(IDTENTRY* pstEntry, void* pvHandler)
 {
-  kSetIDTEntry( pstEntry,
-                pvHandler,
-                0x08,
-                IDT_FLAGS_IST1,
-                IDT_FLAGS_KERNEL,
-                IDT_TYPE_INTERRUPT );
-}
-
-void kDummyHandler(void)
-{
-  kPrintString(0, 0,  "=======================================================");
-  kPrintString(0, 1,  "          Dummy Interrupt Handler Execute~!!!          ");
-  kPrintString(0, 2,  "            Interrupt or Exception Occur~!!            ");
-  kPrintString(0, 3,  "=======================================================");
-
-  while(1);
+  pstEntry->wLowerBaseAddress = (QWORD)pvHandler & 0xFFFF;
+  pstEntry->wSegmentSelector = 0x08;
+  pstEntry->bIST = IDT_FLAGS_IST1 & 0x3;
+  pstEntry->bTypeAndFlags = IDT_TYPE_INTERRUPT | IDT_FLAGS_KERNEL;
+  pstEntry->wMiddleBaseAddress = ((QWORD)pvHandler >> 16) & 0xFFFF;
+  pstEntry->dwUpperBaseAddress = (QWORD)pvHandler >> 32;
+  pstEntry->dwReserved = 0;
 }

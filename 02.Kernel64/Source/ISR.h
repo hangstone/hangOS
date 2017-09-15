@@ -109,12 +109,12 @@ void  kISRMachineCheck(void);
 /*
  *  #19, SIMD Floating Point Exception ISR(In-Service Engineer)
  */
-void  kISRSMDError(void);
+void  kISRSIMDError(void);
 
 /*
  *  #20 ~ #31, Reserved ISR
  */
-void  kISRException(void);
+void  kISREtcException(void);
 
 
 //  interrupt 처리용 ISR

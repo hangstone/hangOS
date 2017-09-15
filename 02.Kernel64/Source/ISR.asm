@@ -26,8 +26,8 @@ global kISR15
 global kISRFPUError
 global kISRAlignmentCheck
 global kISRMachineCheck
-global kISRSMDError
-global kISRException
+global kISRSIMDError
+global kISREtcException
 ;; 인터럽트(Interrupt) 처리를 위한 ISR
 global kISRTimer
 global kISRKeyboard
@@ -326,7 +326,7 @@ kISRMachineCheck:
   KLOADCONTEXT    ;;  context를 복원
   iretq           ;;  인터럽트 처리를 완료하고, 이전에 수행하던 코드로 복원
 
-kISRSMDError:
+kISRSIMDError:
   KSAVECONTEXT    ;;  context를 저장한 뒤 셀렉터를 커널 데이터 스크립트로 교체
 
   ;; 핸들러에 예외 번호를 삽입하고 핸들러 호출
@@ -336,7 +336,7 @@ kISRSMDError:
   KLOADCONTEXT    ;;  context를 복원
   iretq           ;;  인터럽트 처리를 완료하고, 이전에 수행하던 코드로 복원
 
-kISRException:
+kISREtcException:
   KSAVECONTEXT    ;;  context를 저장한 뒤 셀렉터를 커널 데이터 스크립트로 교체
 
   ;; 핸들러에 예외 번호를 삽입하고 핸들러 호출
@@ -348,7 +348,7 @@ kISRException:
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;  예외 핸들러
+;;  인터럽트 핸들러
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 kISRTimer:
   KSAVECONTEXT    ;;  context를 저장한 뒤 셀렉터를 커널 데이터 스크립트로 교체
