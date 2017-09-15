@@ -7,6 +7,7 @@
 
 #include "Descriptor.h"
 #include "Utility.h"
+#include "ISR.h"
 
 //==============================================================================
 // GDT 및 TSS
@@ -107,6 +108,61 @@ void kInitializeIDTTables(void)
   pstIDTR->qwBaseAddress = (QWORD)pstEntry;
   pstIDTR->wLimit = IDT_TABLESIZE - 1;
 
+  //======================================================================
+  //  예외 ISR 등록
+  //======================================================================
+  kSetIDTEntryForSimple(&(pstEntry[0]), kISRDivideError);
+  kSetIDTEntryForSimple(&(pstEntry[1]), kISRDebug);
+  kSetIDTEntryForSimple(&(pstEntry[2]), kISRNMI);
+  kSetIDTEntryForSimple(&(pstEntry[3]), kISRBreakPoint);
+  kSetIDTEntryForSimple(&(pstEntry[4]), kISROverflow);
+  kSetIDTEntryForSimple(&(pstEntry[5]), kISRBoundRangeExceeded);
+  kSetIDTEntryForSimple(&(pstEntry[6]), kISRInvaliedOpcode);
+  kSetIDTEntryForSimple(&(pstEntry[7]), kISRDeviceNotAvailable);
+  kSetIDTEntryForSimple(&(pstEntry[8]), kISRDoubleFault);
+  kSetIDTEntryForSimple(&(pstEntry[9]), kISRCoprocessorSegmentOverrun);
+  kSetIDTEntryForSimple(&(pstEntry[10]), kISRInvalidTSS);
+  kSetIDTEntryForSimple(&(pstEntry[11]), kISRSegmentNotPresent);
+  kSetIDTEntryForSimple(&(pstEntry[12]), kISRStackSegmentFault);
+  kSetIDTEntryForSimple(&(pstEntry[13]), kISRGeneralProtection);
+  kSetIDTEntryForSimple(&(pstEntry[14]), kISRPageFault);
+  kSetIDTEntryForSimple(&(pstEntry[15]), kISR15);
+  kSetIDTEntryForSimple(&(pstEntry[16]), kISRFPUError);
+  kSetIDTEntryForSimple(&(pstEntry[17]), kISRAlignmentCheck);
+  kSetIDTEntryForSimple(&(pstEntry[18]), kISRMachineCheck);
+  kSetIDTEntryForSimple(&(pstEntry[19]), kISRSMDError);
+  kSetIDTEntryForSimple(&(pstEntry[20]), kISRException);
+
+  for (int nIdx=21; nIdx<32; nIdx++)
+  {
+    kSetIDTEntryForSimple(&(pstEntry[nIdx]), kISRException);
+  }
+  
+  //======================================================================
+  //  예외 ISR 등록
+  //======================================================================
+  kSetIDTEntryForSimple(&(pstEntry[32]), kISRTimer);
+  kSetIDTEntryForSimple(&(pstEntry[33]), kISRSlavePIC);
+  kSetIDTEntryForSimple(&(pstEntry[34]), kISRKeyboard);
+  kSetIDTEntryForSimple(&(pstEntry[35]), kISRSerialPort2);
+  kSetIDTEntryForSimple(&(pstEntry[36]), kISRSerialPort1);
+  kSetIDTEntryForSimple(&(pstEntry[37]), kISRParallelPort2);
+  kSetIDTEntryForSimple(&(pstEntry[38]), kISRFloppyDiskController);
+  kSetIDTEntryForSimple(&(pstEntry[39]), kISRParallelPort1);
+  kSetIDTEntryForSimple(&(pstEntry[40]), kISRRTC);
+  kSetIDTEntryForSimple(&(pstEntry[41]), kISRReserved);
+  kSetIDTEntryForSimple(&(pstEntry[42]), kISRNotUsed1);
+  kSetIDTEntryForSimple(&(pstEntry[43]), kISRNotUsed2);
+  kSetIDTEntryForSimple(&(pstEntry[44]), kISRMouse);
+  kSetIDTEntryForSimple(&(pstEntry[45]), kISRCoProcessor);
+  kSetIDTEntryForSimple(&(pstEntry[46]), kISRHardDisk1);
+  kSetIDTEntryForSimple(&(pstEntry[47]), kISRHardDisk2);
+
+  for (int nIdx=48; nIdx<IDT_MAXENTRYCOUNT; nIdx++)
+  {
+    kSetIDTEntryForSimple(&(pstEntry[nIdx]), kISREtcInterrupts);
+  }
+  
   //  0~99까지 vector를 모두 DummyHandler로 연결
   for (int nIdx = 0; nIdx < IDT_MAXENTRYCOUNT; nIdx++)
   {
@@ -133,6 +189,16 @@ void kSetIDTEntry(IDTENTRY* pstEntry,
   pstEntry->wMiddleBaseAddress = ((QWORD)pvHandler >> 16) & 0xFFFF;
   pstEntry->dwUpperBaseAddress = (QWORD)pvHandler >> 32;
   pstEntry->dwReserved = 0;
+}
+
+void kSetIDTEntryForSimple(IDTENTRY* pstEntry, void* pvHandler)
+{
+  kSetIDTEntry( pstEntry,
+                pvHandler,
+                0x08,
+                IDT_FLAGS_IST1,
+                IDT_FLAGS_KERNEL,
+                IDT_TYPE_INTERRUPT );
 }
 
 void kDummyHandler(void)

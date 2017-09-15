@@ -40,4 +40,19 @@ void kLoadTR(WORD wTSSSegmentOffset);
  */
 void kLoadIDTR(QWORD qwIDTRAddress);
 
+/*
+ *  인터럽트를 활성화
+ */
+void kEnableInterrupt(void);
+
+/*
+ *  인터럽트를 비활성화
+ */
+void kDisableInterrupt(void);
+
+/*
+ *  RFLAGS 레지스터를 읽어서 되돌려 줌
+ */
+QWORD kReadRFLAGS(void);
+
 #endif /* __ASSEMBLYUTILITY_H_ */

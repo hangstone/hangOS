@@ -44,6 +44,9 @@ Kernel64:
 	rm -f 02.Kernel64/Temp/Keyboard.o
 	rm -f 02.Kernel64/Temp/Descriptor.o
 	rm -f 02.Kernel64/Temp/Utility.o
+	rm -f 02.Kernel64/Temp/PIC.o
+	rm -f 02.Kernel64/Temp/ISR.o
+	rm -f 02.Kernel64/Temp/InterruptHandler.o
 	
 	@echo
 	@echo ========== Build Complete ==========

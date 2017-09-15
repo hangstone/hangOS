@@ -159,7 +159,7 @@ typedef struct kTSSDataStruct   //  104-byte 크기의 TSS 세그먼트를 위�
 } TSSSEGMENT;
 
 //  IDT Gate Descriptor Structure
-typedef struct kIDTEntryStruct
+typedef struct kIDTEntryStruct  //  IDT 게이트 디스크립터의 자료구조
 {
   WORD  wLowerBaseAddress;
   WORD  wSegmentSelector;
@@ -211,6 +211,9 @@ void kSetIDTEntry(IDTENTRY* pstEntry,
                   BYTE bIST,
                   BYTE bFlags,
                   BYTE bType);
+
+//  IDT 게이트 디스크립터에 값을 설정 (simple version)
+void kSetIDTEntryForSimple(IDTENTRY* pstEntry, void* pvHandler);
 
 //  임시 예외 또는 인터럽트 핸들러
 void kDummyHandler(void);

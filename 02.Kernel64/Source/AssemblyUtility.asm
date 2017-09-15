@@ -4,6 +4,7 @@ SECTION .text   ;;  text 섹션(segment)을 정의
 
 ;;  C언어에서 호출할 수 있도록 이름을 노출 함
 global kInPortByte, kOutPortByte, kLoadGDTR, kLoadTR, kLoadIDTR
+global kEnableInterrupt, kDisableInterrupt, kReadRFLAGS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  코드 영역
@@ -53,3 +54,24 @@ kLoadTR:
 kLoadIDTR:
   lidt [rdi]      ;;  parameter1(IDTR의 address)을 프로세서에 로드하여 IDT 테이블을 설정
   ret
+
+;;  인터럽트를 활성화
+;;    PARAM: 없음
+kEnableInterrupt:
+  sti             ;;  인터럽트를 활성화
+  ret
+
+;;  인터럽트를 비활성화
+;;    PARAM: 없음
+kDisableInterrupt:
+  cli             ;;  인터럽트를 비활성화
+  ret
+
+;;  RFLAGS 레지스터를 읽어서 되돌려 줌
+;;    PARAM: 없음
+kReadRFLAGS:
+  pushfq          ;;  RFLAGS 레지스터를 stack에 저장
+  pop   rax       ;;  스택에 저장된 RFLAGS 레지스터를 RAX 레지스터에 저장하여 
+                  ;;  함수의 반환 값으로 설정
+  ret
+  

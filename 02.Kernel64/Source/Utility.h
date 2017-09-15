@@ -5,7 +5,7 @@
  *      Author: hangstone
  */
 
-#ifdef __UTILITY_H_
+#ifndef __UTILITY_H_
 #define __UTILITY_H_
 
 #include "Types.h"

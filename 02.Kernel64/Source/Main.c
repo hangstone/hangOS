@@ -8,6 +8,7 @@
 #include "Types.h"
 #include "Keyboard.h"
 #include "Descriptor.h"
+#include "PIC.h"
 
 //  문자열 출력 함수
 void kPrintString(int nX, int nY, const char* pszString);
@@ -51,6 +52,13 @@ void Main(void)
     while (1);
   }
 
+  kPrintString(0, 16, "PIC Controller And Interrupt Initialize..........[    ]");
+  //  PIC 컨트롤러 초기화 및 모든 인터럽트 활성화
+  kInitializePIC();
+  kMaskPICInterrupt(0);
+  kEnableInterrupt();
+  kPrintString(50, 16, "Pass");
+
   while (1)
   {
     //  출력 버퍼(포트 0x60)가 차 있으면 scan code를 읽을 수 있음
@@ -68,7 +76,7 @@ void Main(void)
         //  키가 눌러졌으면 키의 ASCII code 값을 화면에 출력
         if (bFlags & KEY_FLAGS_DOWN)
         {
-          kPrintString(nPositionX++, 16, pszTypedString);
+          kPrintString(nPositionX++, 17, pszTypedString);
           
           //  '0'이 입력되면 변수를 '0'으로 나누어 Devide Error Exception(벡터 0번)를 발생시킴
           if('0' == pszTypedString[0])
