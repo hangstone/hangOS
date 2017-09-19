@@ -9,6 +9,7 @@
 #define __KEYBOARD_H_
 
 #include "Types.h"
+#include "Utility.h"
 
 /*
  * Macros
@@ -64,6 +65,10 @@
 #define KEY_F12         0x9F
 #define KEY_PAUSE       0xA0
 
+//  키 큐에 대한 macro
+//  키 큐의 최대 크기
+#define KEY_MAXQUEUECOUNT   100
+
 /*
  * Structs
  */
@@ -92,6 +97,14 @@ typedef struct kKeyboardManager
                               //  'Pause' 키는 세 개의 코드로 구성되므로 첫번째 키를 제외한
                               //  나머지 키를 무시하기 위해서 추가 함
 } KEYBOARDMANAGER;
+
+//  키 큐에 삽입할 데이터 구조체
+typedef struct kKeyDataStruct
+{
+  BYTE  bScanCode;    //  키보드에서 전달된 스캔 코드
+  BYTE  bASCIICode;   //  스캔 코드를 변환한 ASCII 코드
+  BYTE  bFlags;       //  키 상태를 저장하는 플래그 (눌림/떨어짐/확장 키 여부)
+} KEYDATA;
 
 #pragma pack (pop)
 
@@ -166,5 +179,26 @@ BOOL  UpdateCombinationKeyStatusAndLED(BYTE bScanCode);
 BOOL  kConvertScanCodeToASCIICode(BYTE bScanCode,
                                   BYTE* pASCIICode,
                                   BOOL* pFlags);
+
+/*
+ * 키보드 초기화
+ */
+BOOL  kInitializeKeyboard(void);
+
+/*
+ *  스캔코드를 내부적으로 사용하는 키 데이터로 바꾼 후 키 큐에 삽입
+ */
+BOOL  kConvertScanCodeAndPutQueue(BYTE bScanCode);
+
+/*
+ *  키 큐에서 키 데이터를 제거
+ */
+BOOL  kGetKeyFromKeyQueue(KEYDATA* pstData);
+
+/*
+ *  ACK를 기다림
+ *    ACK가 아닌 다른 스캔 코드는 변환해서 큐에 삽입
+ */
+BOOL  kWaitForACKandPutOtherScanCode(void);
 
 #endif /* __KEYBOARD_H_ */

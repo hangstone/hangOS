@@ -7,6 +7,7 @@
 
 #include "InterruptHandler.h"
 #include "PIC.h"
+#include "Keyboard.h"
 
 void  kCommonExceptionHandler(int nVectorNumber, QWORD qwErrorCode)
 {
@@ -50,6 +51,7 @@ void  kKeyboardHandler(int nVectorNumber)
 {
   char vcBuffer[] = "[INT:  , ]";
   static int g_nCommonInterruptCount = 0;
+  BYTE  bTemp;
 
   //======================================================================
   //  인터럽트가 발생했음을 알리기위해 메시지를 출력하는 부분
@@ -61,6 +63,13 @@ void  kKeyboardHandler(int nVectorNumber)
   g_nCommonInterruptCount = (g_nCommonInterruptCount + 1) % 10;
   kPrintString(0, 0, vcBuffer);
   //======================================================================
+
+  //  키보드 컨트롤러에서 데이터를 읽어서 ASCII로 변환하여 큐에 삽입
+  if (TRUE == kIsOutputBufferFull())
+  {
+    bTemp = kGetKeyboardScanCode();
+    kConvertScanCodeAndPutQueue(bTemp);
+  }
 
   //  EOI 전송
   kSendEOIToPIC(nVectorNumber - PIC_IRQSTARTVECTOR);

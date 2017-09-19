@@ -9,6 +9,7 @@
 #include "Keyboard.h"
 #include "Descriptor.h"
 #include "PIC.h"
+#include "AssemblyUtility.h"
 
 //  문자열 출력 함수
 void kPrintString(int nX, int nY, const char* pszString);
@@ -20,6 +21,7 @@ void Main(void)
   BYTE  bFlags;
   BYTE  bScanedCode;
   int   nPositionX = 0;
+  KEYDATA stData;
 
   kPrintString(0, 10, "Switch To IA-32e Mode Success!!");
   kPrintString(0, 11, "IA-32e C Language Kernel Start...................[Pass]");
@@ -38,10 +40,10 @@ void Main(void)
   kLoadIDTR(IDTR_STARTADDRESS);
   kPrintString(50, 14, "Pass");
 
-  kPrintString(0, 15, "Keyboard Activate................................[    ]");
+  kPrintString(0, 15, "Keyboard Activate And Queue Initialize...........[    ]");
 
   //  activate keyboard
-  if (TRUE == kActivateKeyboard())
+  if (TRUE == kInitializeKeyboard())
   {
     kPrintString(50, 15, "Pass");
     kChangeKeyboardLED(FALSE, FALSE, FALSE);
@@ -61,30 +63,21 @@ void Main(void)
 
   while (1)
   {
-    //  출력 버퍼(포트 0x60)가 차 있으면 scan code를 읽을 수 있음
-    if (TRUE == kIsOutputBufferFull())
+    //  키 큐에 데이터가 있으면 키를 처리
+    if (TRUE == kGetKeyFromKeyQueue(&stData))
     {
-      //  출력 버퍼(포트 0x60)에서 scan code를 읽어서 저장
-      bScanedCode = kGetKeyboardScanCode();
-
-      //  scan code를 ASCII code로 변환하는 함수를 호출하여 ASCII 코드와 눌림 또는 떨어짐 정보를 반환
-      bRet = kConvertScanCodeToASCIICode(bScanedCode,
-                                         &(pszTypedString[0]),
-                                         &bFlags);
-      if (TRUE == bRet)
+      //  키가 눌러졌으면 키의 ASCII code 값을 화면에 출력
+      if (stData.bFlags & KEY_FLAGS_DOWN)
       {
-        //  키가 눌러졌으면 키의 ASCII code 값을 화면에 출력
-        if (bFlags & KEY_FLAGS_DOWN)
+        pszTypedString[0] = stData.bASCIICode;
+        kPrintString(nPositionX++, 17, pszTypedString);
+        
+        //  '0'이 입력되면 변수를 '0'으로 나누어 Devide Error Exception(벡터 0번)를 발생시킴
+        if('0' == pszTypedString[0])
         {
-          kPrintString(nPositionX++, 17, pszTypedString);
-          
-          //  '0'이 입력되면 변수를 '0'으로 나누어 Devide Error Exception(벡터 0번)를 발생시킴
-          if('0' == pszTypedString[0])
-          {
-            //  아래 코드를 수행하면, Devide Error 예외가 발생하여 커널의 임시 핸들러가 수행 됨
-            BYTE bTemp = 0;
-            bTemp = bTemp / 0;
-          }
+          //  아래 코드를 수행하면, Devide Error 예외가 발생하여 커널의 임시 핸들러가 수행 됨
+          BYTE bTemp = 0;
+          bTemp = bTemp / 0;
         }        
       }
     }
