@@ -43,8 +43,6 @@ BOOL  kIsInputBufferFull(void)
 
 BOOL  kActivateKeyboard(void)
 {
-  BOOL bRet = FALSE;
-  KEYDATA stData;
   BOOL  bResult = FALSE;
   BOOL  bPreviousInterrupt;
 
@@ -61,8 +59,7 @@ BOOL  kActivateKeyboard(void)
   for (int nIdx=0; nIdx < 0xFFFF; nIdx++)
   {
     //  입력 buffer(포트 0x60)가 비어 있으면 키보드 command 전송 가능
-    bRet = kIsInputBufferFull();
-    if (FALSE == bRet)
+    if (FALSE == kIsInputBufferFull())
       break;
   }
 
@@ -561,7 +558,7 @@ BOOL  kGetKeyFromKeyQueue(KEYDATA* pstData)
   bPreviousInterrupt = kSetInterruptFlag(FALSE);
 
   //  키 큐에서 키 데이터를 제거
-  bResult = kGetQueue(&gs_stKeyQueue, &pstData);
+  bResult = kGetQueue(&gs_stKeyQueue, pstData);
   
   //  이전 인터럽트 플래그 복원
   kSetInterruptFlag(bPreviousInterrupt);

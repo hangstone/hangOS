@@ -21,7 +21,7 @@ void  kMemSet(void* pvDestination, BYTE bData, int nSize)
 //  메모리 복사
 int   kMemCpy(void* pvDestination, const void* pvSource, int nSize)
 {
-  for (int nIdx = 0; nIdx = nSize; nIdx++)
+  for (int nIdx = 0; nIdx < nSize; nIdx++)
   {
     ((char *)pvDestination)[nIdx] = ((char *)pvSource)[nIdx];
   }

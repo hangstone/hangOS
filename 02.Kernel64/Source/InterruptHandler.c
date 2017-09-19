@@ -20,8 +20,8 @@ void  kCommonExceptionHandler(int nVectorNumber, QWORD qwErrorCode)
   kPrintString(0, 11, "IA-32e C Language Kernel Start...................[Pass]");
   kPrintString(0, 0, "=======================================================");
   kPrintString(0, 1, "                  Exception Occur~!!!                  ");
-  kPrintString(0, 2, "                    Vector:");
-  kPrintString(27, 2 , vcBuffer);
+  kPrintString(0, 2, "                     Vector:      ");
+  kPrintString(29, 2 , vcBuffer);
   kPrintString(0, 3, "=======================================================");
 
   while(1);
