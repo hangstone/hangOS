@@ -71,13 +71,13 @@ Disk.img: 00.BootLoader/BootLoader.bin 01.Kernel32/Kernel32.bin 02.Kernel64/Kern
 
 Utility:
 	@echo 
-	@echo =========== Utility Build Start ===========
+	@echo ========== Utility Build Start ==========
 	@echo 
 
 	make -C 04.Utility
 
 	@echo 
-	@echo =========== Utility Build Complete ===========
+	@echo ========== Utility Build Complete ==========
 	@echo 
 	
 clean:
