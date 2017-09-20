@@ -13,25 +13,26 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <unistd.h>
 
 #define BYTESOFSECTOR  512
 
 //  function declaration
 
 /**
- *  ÇöÀç À§Ä¡ºÎÅÍ 512¹ÙÀÌÆ® ¹è¼ö À§Ä¡±îÁö ¸ÂÃß¾î 0x00À¸·Î Ã¤¿ò
+ *  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ 512ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ß¾ï¿½ 0x00ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½
  */
 int   AdjustInSectorSize(int nFd, int nSourceSize);
 
 /**
- *  ºÎÆ® ·Î´õ¿¡ Ä¿³Î¿¡ ´ëÇÑ Á¤º¸¸¦ »ðÀÔ
+ *  ï¿½ï¿½Æ® ï¿½Î´ï¿½ï¿½ï¿½ Ä¿ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
  */
 void  WriteKernelInformation(int nTargetFd,
                              int nTotalKernelSectorCount,
                              int nKernel32SectorCount);
 
 /**
- *  ¼Ò½º ÆÄÀÏ(Source FD)ÀÇ ³»¿ëÀ» ¸ñÇ¥ ÆÄÀÏ(Target FD)¿¡ º¹»çÇÏ°í ±× Å©±â¸¦ µÇµ¹·ÁÁÜ
+ *  ï¿½Ò½ï¿½ ï¿½ï¿½ï¿½ï¿½(Source FD)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½(Target FD)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ Å©ï¿½â¸¦ ï¿½Çµï¿½ï¿½ï¿½ï¿½ï¿½
  */
 int   CopyFile(int nSourceFd, int nTargetFd);
 
@@ -51,7 +52,7 @@ int   main(int argc, char* argv[])
       exit(-1);
   }
 
-  //	Disk.img ÆÄÀÏÀ» »ý¼º
+  //	Disk.img ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
   nTargetFd = open("Disk.img",
 									 O_RDWR | O_CREAT | O_TRUNC | O_BINARY,
 									 S_IREAD |S_IWRITE);
@@ -62,7 +63,7 @@ int   main(int argc, char* argv[])
   }
 
   /*
-   *	ºÎÆ®·Î´õ ÆÄÀÏÀ» ÀÐ¾î¼­ ¸ðµç ³»¿ëÀ» µð½ºÅ© ÀÌ¹ÌÁö ÆÄÀÏ·Î º¹»ç
+   *	ï¿½ï¿½Æ®ï¿½Î´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾î¼­ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å© ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ï¿½
    */
   printf("[INFO] Copy boot loader to image file\n");
   nSourceFd = open(argv[1], O_RDONLY | O_BINARY);
@@ -75,7 +76,7 @@ int   main(int argc, char* argv[])
   nSourceSize = CopyFile(nSourceFd, nTargetFd);
   close(nSourceFd);
 
-  //  ÆÄÀÏ Å©±â¸¦ ¼½ÅÍ Å©±âÀÎ 512-byte·Î ¸ÂÃß±â À§ÇØ ³ª¸ÓÁö ºÎºÐÀ» 0x00À¸·Î Ã¤¿ò
+  //  ï¿½ï¿½ï¿½ï¿½ Å©ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ï¿½ï¿½ 512-byteï¿½ï¿½ ï¿½ï¿½ï¿½ß±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½ï¿½ï¿½ 0x00ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½
   nBootLoaderSize = AdjustInSectorSize(nTargetFd, nSourceSize);
   printf("[INFO] %s size = [%d] and sector count = [%d]\n",
          argv[1],
@@ -83,7 +84,7 @@ int   main(int argc, char* argv[])
          nBootLoaderSize);
 
   /*
-   *  32-bit Ä¿³Î ÆÄÀÏÀ» ¿­¾î¼­ ¸ðµç ³»¿ëÀ» µð½ºÅ© ÀÌ¹ÌÁö ÆÄÀÏ·Î º¹»ç
+   *  32-bit Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î¼­ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å© ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ï¿½
    */
   printf("[INFO] Copy protected mode kernel to image file\n");
   if ((nSourceFd = open(argv[2], O_RDONLY | O_BINARY)) == -1)
@@ -95,7 +96,7 @@ int   main(int argc, char* argv[])
   nSourceSize = CopyFile(nSourceFd, nTargetFd);
   close(nSourceFd);
 
-  //  ÆÄÀÏ Å©±â¸¦ ¼½ÅÍ Å©±âÀÎ 512-byte·Î ¸ÂÃß±â À§ÇØ ³ª¸ÓÁö ºÎºÐÀ» 0x00À¸·Î Ã¤¿ò
+  //  ï¿½ï¿½ï¿½ï¿½ Å©ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ï¿½ï¿½ 512-byteï¿½ï¿½ ï¿½ï¿½ï¿½ß±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½ï¿½ï¿½ 0x00ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½
   nKernel32SectorCount = AdjustInSectorSize(nTargetFd, nSourceSize);
   printf("[INFO] %s size = [%d] and sector count = [%d]\n",
          argv[2],
@@ -103,7 +104,7 @@ int   main(int argc, char* argv[])
          nKernel32SectorCount);
 
   /*
-   *  64-bit Ä¿³Î ÆÄÀÏ(IA-32e ¸ðµå Ä¿³Î ÀÌ¹ÌÁö)À» ¿­¾î¼­ ¸ðµç ³»¿ëÀ» µð½ºÅ© ÀÌ¹ÌÁö ÆÄÀÏ·Î º¹»ç
+   *  64-bit Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(IA-32e ï¿½ï¿½ï¿½ Ä¿ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½î¼­ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å© ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ï¿½
    */
   printf("[INFO] Copy IA-32e mode kernel to image file\n");
   nSourceFd = open(argv[3], O_RDONLY | O_BINARY);
@@ -116,7 +117,7 @@ int   main(int argc, char* argv[])
   nSourceSize = CopyFile(nSourceFd, nTargetFd);
   close(nSourceFd);
 
-  //  ÆÄÀÏ Å©±â¸¦ ¼½ÅÍ Å©±âÀÎ 512-byte·Î ¸ÂÃß±â À§ÇØ ³ª¸ÓÁö ºÎºÐÀ» 0x00À¸·Î Ã¤¿ò
+  //  ï¿½ï¿½ï¿½ï¿½ Å©ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ï¿½ï¿½ 512-byteï¿½ï¿½ ï¿½ï¿½ï¿½ß±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½ï¿½ï¿½ 0x00ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½
   nKernel64SectorCount = AdjustInSectorSize(nTargetFd, nSourceSize);
   printf("[INFO] %s size = [%d] and sector count = [%d]\n",
          argv[3],
@@ -124,10 +125,10 @@ int   main(int argc, char* argv[])
          nKernel64SectorCount);
 
   /**
-   *  µð½ºÅ© ÀÌ¹ÌÁö¿¡ Ä¿³Î Á¤º¸ °»½Å
+   *  ï¿½ï¿½Å© ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
    */
   printf("[INFO] Start to write kernel information\n");
-  //  ºÎÆ®¼½ÅÍÀÇ 5¹øÂ° ¹ÙÀÌÆ®ºÎÅÍ Ä¿³Î¿¡ ´ëÇÑ Á¤º¸¸¦ ³ÖÀ½
+  //  ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 5ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
   WriteKernelInformation(nTargetFd,
 												 nKernel32SectorCount + nKernel64SectorCount,
 												 nKernel32SectorCount);
@@ -162,7 +163,7 @@ int   AdjustInSectorSize(int iFd, int iSourceSize)
           printf( "[INFO] File size is aligned 512 byte\n" );
       }
 
-      // ¼½ÅÍ ¼ö¸¦ µÇµ¹·ÁÁÜ
+      // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Çµï¿½ï¿½ï¿½ï¿½ï¿½
       iSectorCount = ( iSourceSize + iAdjustSizeToSector ) / BYTESOFSECTOR;
       return iSectorCount;
 }
@@ -174,7 +175,7 @@ void  WriteKernelInformation(int nTargetFd,
 	unsigned short usData;
   long lPosition;
 
-  // ÆÄÀÏÀÇ ½ÃÀÛ¿¡¼­ 5¹ÙÀÌÆ® ¶³¾îÁø À§Ä¡°¡ Ä¿³ÎÀÇ ÃÑ ¼½ÅÍ ¼ö Á¤º¸¸¦ ³ªÅ¸³¿
+  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ï¿½ï¿½ 5ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½
   lPosition = lseek(nTargetFd, (off_t)5, SEEK_SET);
   if (lPosition == -1)
   {
@@ -190,9 +191,9 @@ void  WriteKernelInformation(int nTargetFd,
   	printf("[INFO] Found sector count position: %d\n", lPosition);
   }
 
-  //	ºÎÆ®·Î´õ¸¦ Á¦¿ÜÇÑ ÃÑ sector ¼ö ¹× º¸È£ ¸ðµå Ä¿³ÎÀÇ ¼½ÅÍ ¼ö ÀúÀå
-  //	bootloader image¿¡¼­ º¸È£ ¸ðµå Ä¿³ÎÀÇ ÃÑ sector ¼ö ¿µ¿ªÀº ÃÑ sector ¼ö ¿µ¿ªÀÇ ¹Ù·Î ÀÌÈÄ·¹ À§Ä¡ÇÏ¹Ç·Î,
-  //	ÃÑ sector ¼ö Á¤º¸¿¡ ÀÌ¾î¼­ 2-byte¸¦ ±â·ÏÇÏµµ·Ï ¼öÁ¤
+  //	ï¿½ï¿½Æ®ï¿½Î´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ sector ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½È£ ï¿½ï¿½ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+  //	bootloader imageï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ ï¿½ï¿½ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ sector ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ sector ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½Ä·ï¿½ ï¿½ï¿½Ä¡ï¿½Ï¹Ç·ï¿½,
+  //	ï¿½ï¿½ sector ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¾î¼­ 2-byteï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
   usData = (unsigned short)nTotalKernelSectorCount;
   write(nTargetFd, &usData, 2);
   usData = (unsigned short)nKernel32SectorCount;
