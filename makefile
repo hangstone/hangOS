@@ -48,6 +48,8 @@ Kernel64:
 	rm -f 02.Kernel64/Temp/ISR.o
 	rm -f 02.Kernel64/Temp/InterruptHandler.o
 	rm -f 02.Kernel64/Temp/Queue.o
+	rm -f 02.Kernel64/Temp/Console.o
+	rm -f 02.Kernel64/Temp/ConsoleShell.o
 	
 	@echo
 	@echo ========== Build Complete ==========
